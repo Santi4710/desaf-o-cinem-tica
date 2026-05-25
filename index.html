@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desafío de Física: MRU y MRUV en Scratch</title>
+    <!-- Tailwind CSS para diseño responsivo y moderno -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js para generación de gráficos dinámicos e interactivos en tiempo real -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Configuración y script de MathJax para renderizar ecuaciones LaTeX de forma impecable en la web -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']]
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        /* Estilos de impresión optimizados */
+        @media print {
+            body {
+                background-color: white !important;
+                color: black !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .print-shadow-none {
+                box-shadow: none !important;
+                border: 1px solid #e2e8f0 !important;
+                background: transparent !important;
+            }
+            .a4-page {
+                margin: 0 !important;
+                padding: 0 !important;
+                box-shadow: none !important;
+                max-width: 100% !important;
+            }
+            .print-border {
+                border: 1px solid #cbd5e1 !important;
+                border-radius: 0.5rem !important;
+                padding: 1rem !important;
+            }
+        }
+        
+        /* Estilo para la grilla simulada de Excel */
+        .excel-grid {
+            grid-template-columns: 40px 1fr 150px;
+        }
+        
+        /* Contenedor estándar con proporción 4:3 */
+        .scratch-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 82.8%; /* Proporción para el marco de Scratch (485x402) */
+            height: 0;
+            overflow: hidden;
+            background-color: #0f172a;
+            transition: all 0.3s ease;
+        }
+        .scratch-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* ==========================================
+           SUPER SOLUCIÓN PARA PANTALLA COMPLETA REAL
+           ========================================== */
+        /* Al entrar en modo Fullscreen, forzamos que el iframe escale de forma proporcional */
+        .scratch-container:fullscreen {
+            background-color: #090d16 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            padding-bottom: 0 !important;
+        }
+        .scratch-container:fullscreen iframe {
+            position: relative !important;
+            width: 100vw !important;
+            height: 75vw !important; /* Proporción matemática 4:3 */
+            max-width: 133.33vh !important; /* Evita que supere el alto de la pantalla */
+            max-height: 100vh !important;
+            border: none !important;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
+        }
+
+        /* Compatibilidad para navegadores Safari / iOS / Webkit */
+        .scratch-container:-webkit-full-screen {
+            background-color: #090d16 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            padding-bottom: 0 !important;
+        }
+        .scratch-container:-webkit-full-screen iframe {
+            position: relative !important;
+            width: 100vw !important;
+            height: 75vw !important;
+            max-width: 133.33vh !important;
+            max-height: 100vh !important;
+            border: none !important;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 font-sans min-h-screen py-6 px-4 print:py-0 print:px-0">
+
+    <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden border border-slate-200 a4-page print-shadow-none">
+        
+        <!-- BARRA DE ACCIONES SUPERIOR -->
+        <div class="no-print bg-slate-800 text-white px-6 py-4 flex flex-wrap justify-between items-center gap-4 border-b border-slate-700">
+            <div class="flex items-center gap-3">
+                <div class="bg-emerald-500 text-white p-2 rounded-lg">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="font-bold text-sm md:text-base">Ficha Interactiva: Cinemática Integrada</h3>
+                    <p class="text-xs text-slate-400">Dos juegos sobre MRU y MRUV con simulador de Excel, ecuaciones de cálculo y gráfico grupal.</p>
+                </div>
+            </div>
+            <div class="flex gap-2 w-full sm:w-auto justify-end">
+                <button onclick="window.print()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-4 py-2 rounded-lg text-sm transition-colors flex items-center gap-2 shadow-md w-full sm:w-auto justify-center">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
+                    </svg>
+                    Imprimir / Guardar PDF
+                </button>
+                <button onclick="reiniciarTodo()" class="bg-slate-700 hover:bg-slate-600 text-slate-200 font-medium px-3 py-2 rounded-lg text-sm transition-colors">
+                    Limpiar
+                </button>
+            </div>
+        </div>
+
+        <!-- ENCABEZADO PRINCIPAL -->
+        <div class="p-8 border-b border-slate-200 bg-gradient-to-r from-blue-700 to-indigo-800 text-white">
+            <div class="flex flex-col md:flex-row justify-between md:items-center gap-6">
+                <div>
+                    <span class="bg-blue-500/30 text-blue-200 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Cinemática en el Aula</span>
+                    <h1 class="text-3xl md:text-4xl font-extrabold mt-2 tracking-tight">Desafío Cinemático: MRU y MRUV</h1>
+                    <p class="text-blue-100 mt-2 text-sm max-w-2xl">Analiza la velocidad y aceleración en la Carrera Cinemática, y resuelve desafíos conceptuales en el Laberinto Pokémon de MRU y MRUV.</p>
+                </div>
+                <div class="bg-white/10 p-4 rounded-xl backdrop-blur-sm self-start md:self-auto text-xs min-w-[220px] border border-white/10">
+                    <div class="mb-1.5"><span class="text-blue-200">Docente:</span> <span class="font-semibold text-white">Física Creativa</span></div>
+                    <div class="mb-1.5"><span class="text-blue-200">Plataforma:</span> <span class="font-semibold text-white">Scratch Web Player</span></div>
+                    <div><span class="text-blue-200">Temas Clave:</span> <span class="font-semibold text-white">MRU, MRUV y Gráficas</span></div>
+                </div>
+            </div>
+
+            <!-- FICHA DE DATOS DEL ALUMNO -->
+            <div class="mt-8 pt-6 border-t border-white/20 grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
+                <div>
+                    <label class="block text-xs text-blue-200 uppercase font-bold mb-1">Nombre del Estudiante:</label>
+                    <input type="text" id="student-name-input" placeholder="Completa tu nombre..." class="w-full bg-white/10 border border-white/20 rounded px-3 py-2 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                </div>
+                <div>
+                    <label class="block text-xs text-blue-200 uppercase font-bold mb-1">Grupo / Clase:</label>
+                    <input type="text" placeholder="Ej: 3º año" class="w-full bg-white/10 border border-white/20 rounded px-3 py-2 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                </div>
+                <div>
+                    <label class="block text-xs text-blue-200 uppercase font-bold mb-1">Fecha de la Actividad:</label>
+                    <input type="date" class="w-full bg-white/10 border border-white/20 rounded px-3 py-2 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                </div>
+            </div>
+        </div>
+
+        <!-- CONTENIDO Y CONSIGNAS -->
+        <div class="p-8 space-y-8">
+            
+            <!-- EXPLICACIÓN Y CONSIGNA -->
+            <div class="bg-blue-50 border-l-4 border-blue-600 p-5 rounded-r-xl">
+                <h3 class="text-blue-900 font-bold text-lg flex items-center gap-2 mb-2">
+                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                    </svg>
+                    Consigna de Trabajo
+                </h3>
+                <p class="text-sm text-slate-700 leading-relaxed">
+                    ¡Bienvenidos a la arena de pruebas de Cinemática! Hoy utilizaremos la teoría de los movimientos físicos en dos entornos de simulación interactivos. Completen las siguientes misiones directamente en la pantalla:
+                    <br><strong class="text-slate-900">1. Dominar la Carrera Física:</strong> Conduzcan el móvil observando los cambios de fase. Experimentarán un tramo en <strong class="text-blue-700">MRU</strong> (velocidad constante) y luego deberán aplicar aceleración constante en el tramo de <strong class="text-indigo-700">MRUV</strong>.
+                    <br><strong class="text-slate-900">2. Resolver el Laberinto Pokémon de MRU y MRUV:</strong> Atraviesen los pasillos, esquiven las barreras y respondan de forma correcta a las preguntas conceptuales y de cálculo sobre velocidad, aceleración y distancia para sumar puntos de combate.
+                    <br><span class="text-emerald-700 font-semibold">Al finalizar, carguen sus mejores marcas en la planilla interactiva tipo Excel al final del documento para calcular su puntaje acumulado automático mediante la ecuación de suma, y comparen sus marcas con el resto de la clase utilizando el panel gráfico.</span>
+                </p>
+            </div>
+
+            <!-- CONTROL DE MOTOR DE RENDERIZADO (NO IMPRIMIBLE) -->
+            <div class="no-print bg-slate-100 border border-slate-200 p-4 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="flex items-center gap-2">
+                    <span class="bg-indigo-600 text-white font-bold px-2 py-1 rounded text-[10px]">REPRODUCTOR</span>
+                    <span class="text-xs text-slate-600 font-medium">Si los elements en pantalla completa se ven pequeños, usa TurboWarp HD.</span>
+                </div>
+                <div class="flex bg-slate-200 p-1 rounded-lg border border-slate-300 w-full sm:w-auto">
+                    <button id="btn-engine-scratch" onclick="cambiarMotor('scratch')" class="flex-1 sm:flex-initial text-xs font-bold px-3 py-1.5 rounded transition-all bg-slate-300 text-slate-700">
+                        Scratch Oficial
+                    </button>
+                    <button id="btn-engine-turbo" onclick="cambiarMotor('turbo')" class="flex-1 sm:flex-initial text-xs font-bold px-3 py-1.5 rounded transition-all bg-indigo-600 text-white shadow-sm">
+                        TurboWarp HD 🚀
+                    </button>
+                </div>
+            </div>
+
+            <!-- SECCIÓN DE JUEGOS EMBEBIDOS (CON TABS INTERACTIVOS DE ALTA VISIBILIDAD) -->
+            <div>
+                <h2 class="text-xl font-bold text-slate-800 mb-4 pb-2 border-b border-slate-200 flex items-center gap-2">
+                    <span class="bg-orange-500 text-white rounded-lg p-1 text-xs">🐱</span>
+                    Fase 1: Simuladores de Cinemática Interactivos
+                </h2>
+
+                <!-- Control de pestañas rediseñado: Carrera de autos ahora es ACTIVA por defecto en la carga inicial -->
+                <div class="no-print flex flex-col sm:flex-row gap-3 mb-6 bg-slate-100/80 p-2.5 rounded-xl border border-slate-200">
+                    <!-- Botón Carrera de Cinemática (Activo por defecto - Color Esmeralda / Deportivo) -->
+                    <button id="tab-btn-race" onclick="cambiarTab('race')" class="flex-1 py-3.5 text-center rounded-lg text-sm font-black transition-all duration-300 bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-lg border-2 border-emerald-300 transform scale-102 flex items-center justify-center gap-2">
+                        <span class="text-lg">🏎️</span>
+                        <span>Juego 1: Simulador Carrera de Cinemática</span>
+                    </button>
+                    <!-- Botón Laberinto Pokémon (Inactivo por defecto - Color Fuego / Rojo Suave) -->
+                    <button id="tab-btn-lab" onclick="cambiarTab('lab')" class="flex-1 py-3.5 text-center rounded-lg text-sm font-bold transition-all duration-300 bg-red-50/70 hover:bg-red-100 text-red-700 hover:text-red-950 border border-red-200/50 flex items-center justify-center gap-2">
+                        <span class="text-lg">🧠</span>
+                        <span>Juego 2: Laberinto Pokémon de MRU y MRUV</span>
+                    </button>
+                </div>
+
+                <!-- CONTENEDOR DE JUEGOS -->
+                <div class="space-y-6">
+                    
+                    <!-- AREA JUEGO 1: CARRERA CINEMÁTICA (VISIBLE POR DEFECTO) -->
+                    <div id="game-race" class="grid grid-cols-1 md:grid-cols-12 gap-6 print-border">
+                        <div class="md:col-span-5 flex flex-col justify-between space-y-4">
+                            <div>
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="bg-indigo-100 text-indigo-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">Desafío 1</span>
+                                    <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-2 py-0.5 rounded">Carrera MRU ➔ MRUV</span>
+                                </div>
+                                <h3 class="text-xl font-bold text-slate-800">Carrera de Velocidad y Aceleración</h3>
+                                <p class="text-xs text-slate-400 font-mono mb-3">ID de Scratch: 1231778803</p>
+                                <p class="text-sm text-slate-600 leading-relaxed">
+                                    ¡Comienza la carrera de cinemática! Presta atención a las fases físicas del movimiento: el vehículo iniciará en una fase de <strong>Movimiento Rectilíneo Uniforme (MRU)</strong> con velocidad constante, es decir, sin aceleración ($a = 0$). Posteriormente, pasarás a la fase de <strong>Movimiento Rectilíneo Uniformemente Variado (MRUV)</strong>, donde deberás gestionar la aceleración uniforme ($a \neq 0$) para cruzar la meta a tiempo.
+                                </p>
+                            </div>
+                            <div class="no-print space-y-3">
+                                <div class="p-3 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-800">
+                                    <strong>💡 Instrucción de Física:</strong> Observa el velocímetro. Nota cómo varía la velocidad cuando la aceleración entra en juego de forma uniforme.
+                                </div>
+                                <!-- BOTÓN LLAMATIVO Y GRANDE CON DEGRADADO DEPORTIVO/ACELERACIÓN -->
+                                <button onclick="activarPantallaCompleta('container-race')" class="w-full bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-600 hover:from-emerald-600 hover:via-teal-600 hover:to-cyan-700 text-white font-black py-4 px-6 rounded-xl text-base shadow-xl transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center justify-center gap-3 border-2 border-emerald-300 uppercase tracking-wider animate-pulse hover:animate-none">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 8V4m0 0h4M4 4l5 5m11-5h-4m4 0v4m0-4l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
+                                    </svg>
+                                    ¡Correr Carrera en Pantalla Completa!
+                                </button>
+                            </div>
+                        </div>
+                        <div class="md:col-span-7 bg-slate-900 p-3 rounded-2xl shadow-inner flex items-center justify-center">
+                            <!-- CONTENEDOR DE LA PANTALLA COMPLETA JUEGO 1 -->
+                            <div id="container-race" class="w-full max-w-[485px] scratch-container rounded-lg overflow-hidden border border-slate-700 shadow-lg">
+                                <iframe id="iframe-race" src="https://turbowarp.org/1231778803/embed?autoplay=0" allowtransparency="true" frameborder="0" scrolling="no" allowfullscreen></iframe>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- AREA JUEGO 2: LABERINTO DE PREGUNTAS MRU/MRUV (OCULTO POR DEFECTO) -->
+                    <div id="game-lab" class="hidden grid grid-cols-1 md:grid-cols-12 gap-6 print-border">
+                        <div class="md:col-span-5 flex flex-col justify-between space-y-4">
+                            <div>
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">Desafío 2</span>
+                                    <span class="bg-red-100 text-red-800 text-xs font-bold px-2 py-0.5 rounded">Laberinto Pokémon</span>
+                                </div>
+                                <h3 class="text-xl font-bold text-slate-800">Laberinto Pokémon de MRU y MRUV</h3>
+                                <p class="text-xs text-slate-400 font-mono mb-3">ID de Scratch: 1217700383</p>
+                                <p class="text-sm text-slate-600 leading-relaxed">
+                                    ¡Es hora de demostrar lo aprendido de manera divertida! Recorre este laberinto temático de Pokémon. En cada parada te toparás con desafíos teóricos y prácticos sobre el <strong>Movimiento Rectilíneo Uniforme (MRU)</strong> y el <strong>Movimiento Rectilíneo Uniformemente Variado (MRUV)</strong>. Escribe las respuestas correctas para vencer los obstáculos y sumar el mayor puntaje posible para tu récord escolar.
+                                </p>
+                            </div>
+                            <div class="no-print space-y-3">
+                                <div class="p-3 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-800">
+                                    <strong>💡 Control del juego:</strong> Haz clic en la bandera verde para comenzar, desplázate usando las teclas de dirección del teclado y escribe tus respuestas teóricas y numéricas directamente.
+                                </div>
+                                <!-- BOTÓN LLAMATIVO Y GRANDE CON DEGRADADO ENÉRGICO -->
+                                <button onclick="activarPantallaCompleta('container-lab')" class="w-full bg-gradient-to-r from-amber-500 via-orange-500 to-red-600 hover:from-amber-600 hover:via-orange-600 hover:to-red-700 text-white font-black py-4 px-6 rounded-xl text-base shadow-xl transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center justify-center gap-3 border-2 border-amber-300 uppercase tracking-wider animate-pulse hover:animate-none">
+                                    <svg class="w-6 h-6 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 8V4m0 0h4M4 4l5 5m11-5h-4m4 0v4m0-4l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
+                                    </svg>
+                                    ¡Jugar Laberinto en Pantalla Completa!
+                                </button>
+                            </div>
+                        </div>
+                        <div class="md:col-span-7 bg-slate-900 p-3 rounded-2xl shadow-inner flex items-center justify-center">
+                            <!-- CONTENEDOR DE LA PANTALLA COMPLETA JUEGO 2 -->
+                            <div id="container-lab" class="w-full max-w-[485px] scratch-container rounded-lg overflow-hidden border border-slate-700 shadow-lg">
+                                <iframe id="iframe-lab" src="https://turbowarp.org/1217700383/embed?autoplay=0" allowtransparency="true" frameborder="0" scrolling="no" allowfullscreen></iframe>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- SIMULADOR EXCEL EMBEBIDO -->
+            <div>
+                <h2 class="text-xl font-bold text-slate-800 mb-2 pb-2 border-b border-slate-200 flex items-center gap-2">
+                    <span class="bg-emerald-600 text-white rounded-lg p-1 text-xs">田</span>
+                    Fase 2: Registro de Resultados en Planilla
+                </h2>
+                <p class="text-sm text-slate-600 mb-4">
+                    Ingresa tus puntajes máximos de cada juego en las celdas blancas de la columna <strong>B</strong>. El total final se calcula de forma automática mediante la ecuación matemática de Excel.
+                </p>
+
+                <!-- TABLA INTERACTIVA ESTILO EXCEL -->
+                <div class="border border-emerald-700/30 rounded-xl overflow-hidden bg-white shadow-md max-w-2xl mx-auto">
+                    
+                    <!-- Cabecera de la ventana -->
+                    <div class="bg-emerald-800 text-white px-4 py-2.5 flex items-center justify-between text-xs font-semibold">
+                        <div class="flex items-center gap-2">
+                            <span class="bg-emerald-600 px-1.5 py-0.5 rounded text-[10px]">XLSX</span>
+                            <span class="font-mono">Ficha_Calculo_Fisica.xlsx</span>
+                        </div>
+                        <span class="opacity-80 text-[11px]">Microsoft Excel Engine</span>
+                    </div>
+
+                    <!-- Barra de Ecuaciones -->
+                    <div class="bg-slate-50 border-b border-slate-200 px-3 py-1.5 flex items-center gap-2 text-xs text-slate-600">
+                        <span class="font-bold text-slate-400 select-none border-r border-slate-200 pr-2">fx</span>
+                        <div id="selected-cell-indicator" class="bg-white border border-slate-200 rounded px-1.5 py-0.5 font-mono">B4</div>
+                        <div id="ecuacion-display" class="bg-white border border-slate-200 rounded px-2 py-0.5 font-mono flex-1 text-slate-800">
+                            =SUMA(B2:B3)
+                        </div>
+                    </div>
+
+                    <!-- Grilla -->
+                    <div class="font-mono text-sm">
+                        <!-- Identificadores de columnas -->
+                        <div class="grid excel-grid bg-slate-100 border-b border-slate-200 text-center text-slate-500 font-bold select-none text-xs">
+                            <div class="py-1 border-r border-slate-200 bg-slate-200/40"></div>
+                            <div class="py-1 border-r border-slate-200">A</div>
+                            <div class="py-1">B</div>
+                        </div>
+
+                        <!-- Fila 1 -->
+                        <div class="grid excel-grid border-b border-slate-200">
+                            <div class="bg-slate-100 text-center text-xs text-slate-500 font-bold py-2 border-r border-slate-200 flex items-center justify-center select-none">1</div>
+                            <div class="px-3 py-2 border-r border-slate-200 bg-slate-50 font-sans font-bold text-slate-700">Actividad Evaluada</div>
+                            <div class="px-3 py-2 bg-slate-50 font-sans font-bold text-slate-700 text-center">Puntaje Máximo Obtenido</div>
+                        </div>
+
+                        <!-- Fila 2 (Input Carrera Cinemática) -->
+                        <div class="grid excel-grid border-b border-slate-200">
+                            <div class="bg-slate-100 text-center text-xs text-slate-500 font-bold py-2 border-r border-slate-200 flex items-center justify-center select-none">2</div>
+                            <div class="px-3 py-2 border-r border-slate-200 text-slate-700 font-sans flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 bg-emerald-500 rounded-full"></span>
+                                Juego 1: Carrera MRU/MRUV
+                            </div>
+                            <div class="p-1">
+                                <input type="number" id="input-mrv" value="0" min="0" oninput="calcularTotal()" onfocus="focusCell('B2', '=1231778803')" class="w-full text-center py-1 border border-transparent rounded focus:border-emerald-600 focus:ring-1 focus:ring-emerald-500 focus:outline-none hover:border-slate-300 transition-colors font-mono font-bold text-slate-800 bg-white">
+                            </div>
+                        </div>
+
+                        <!-- Fila 3 (Input Laberinto Pokémon) -->
+                        <div class="grid excel-grid border-b border-slate-200">
+                            <div class="bg-slate-100 text-center text-xs text-slate-500 font-bold py-2 border-r border-slate-200 flex items-center justify-center select-none">3</div>
+                            <div class="px-3 py-2 border-r border-slate-200 text-slate-700 font-sans flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 bg-blue-500 rounded-full"></span>
+                                Juego 2: Laberinto Pokémon MRU/MRUV
+                            </div>
+                            <div class="p-1">
+                                <input type="number" id="input-mru" value="0" min="0" oninput="calcularTotal()" onfocus="focusCell('B3', '=1217700383')" class="w-full text-center py-1 border border-transparent rounded focus:border-emerald-600 focus:ring-1 focus:ring-emerald-500 focus:outline-none hover:border-slate-300 transition-colors font-mono font-bold text-slate-800 bg-white">
+                            </div>
+                        </div>
+
+                        <!-- Fila 4 (Total Suma) -->
+                        <div class="grid excel-grid border-b-2 border-emerald-600 bg-emerald-50/50 font-bold">
+                            <div class="bg-slate-100 text-center text-xs text-slate-500 font-bold py-3 border-r border-slate-200 flex items-center justify-center select-none">4</div>
+                            <div class="px-3 py-2.5 border-r border-slate-200 text-emerald-900 font-sans uppercase tracking-wider text-xs flex items-center">Puntaje Total Acumulado</div>
+                            <div id="cell-total" onclick="focusCell('B4', '=SUMA(B2:B3)')" class="px-3 py-2.5 text-center text-emerald-800 font-bold cursor-pointer hover:bg-emerald-100 transition-colors">
+                                0
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- BOTÓN PARA VULCAR AL PANEL COMPARATIVO (NO IMPRIMIBLE) -->
+                <div class="no-print mt-4 flex justify-center">
+                    <button onclick="agregarEstudianteActivo()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg transition-all flex items-center gap-2 hover:scale-[1.02] active:scale-[0.98]">
+                        <span>📊</span>
+                        Agregar este estudiante al Gráfico Comparativo
+                    </button>
+                </div>
+            </div>
+
+            <!-- NUEVA SECCIÓN: GRÁFICO COMPARATIVO (REGISTRO MULTI-ESTUDIANTE) -->
+            <div class="bg-slate-50 rounded-2xl p-6 border border-slate-200 shadow-sm">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4 pb-2 border-b border-slate-200">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                            <span class="bg-indigo-600 text-white rounded-lg p-1.5 text-xs">📈</span>
+                            Fase 3: Registro General & Gráfico Comparativo de Estudiantes
+                        </h2>
+                        <p class="text-xs text-slate-500 mt-1">Suma estudiantes uno a uno utilizando la planilla superior o regístralos manualmente aquí abajo para comparar sus récords.</p>
+                    </div>
+                    <!-- Formulario Rápido Manual (Solo web) -->
+                    <div class="no-print flex flex-wrap gap-2 w-full md:w-auto">
+                        <input type="text" id="manual-name" placeholder="Nombre Estudiante" class="border border-slate-300 rounded px-2.5 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-indigo-500 bg-white min-w-[120px]">
+                        <input type="number" id="manual-mrv" placeholder="Ptos Carr" class="border border-slate-300 rounded px-2.5 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-indigo-500 bg-white w-20 text-center">
+                        <input type="number" id="manual-mru" placeholder="Ptos Lab" class="border border-slate-300 rounded px-2.5 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-indigo-500 bg-white w-20 text-center">
+                        <button onclick="agregarEstudianteManual()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded text-xs transition-colors flex items-center gap-1">
+                            Añadir ➕
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <!-- Tabla de Estudiantes -->
+                    <div class="lg:col-span-5 flex flex-col justify-between">
+                        <div class="overflow-x-auto border border-slate-200 rounded-lg bg-white shadow-sm max-h-64 overflow-y-auto">
+                            <table class="w-full text-left border-collapse text-xs">
+                                <thead class="bg-slate-100 text-slate-600 uppercase font-bold sticky top-0">
+                                    <tr>
+                                        <th class="p-3">Estudiante</th>
+                                        <th class="p-3 text-center">Carrera</th>
+                                        <th class="p-3 text-center">Laberinto</th>
+                                        <th class="p-3 text-center">Total</th>
+                                        <th class="p-3 text-center no-print">Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="student-table-body" class="divide-y divide-slate-100 text-slate-700">
+                                    <!-- Cargar dinámicamente -->
+                                    <tr id="empty-table-row">
+                                        <td colspan="5" class="p-4 text-center text-slate-400 italic">No hay estudiantes cargados en el gráfico comparativo aún.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="no-print mt-3 text-[11px] text-slate-500 flex justify-between items-center bg-slate-100 p-2.5 rounded border border-slate-200">
+                            <span>* El gráfico se actualiza automáticamente con cada registro.</span>
+                            <button onclick="limpiarGrafico()" class="text-red-600 hover:text-red-700 font-bold transition-colors">Vaciar Gráfico</button>
+                        </div>
+                    </div>
+
+                    <!-- Gráfico Real con Chart.js -->
+                    <div class="lg:col-span-7 bg-white p-4 rounded-xl border border-slate-200 shadow-sm min-h-[250px] flex flex-col justify-center">
+                        <div class="relative w-full h-64">
+                            <canvas id="comparisonChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PREGUNTAS DE REFLEXIÓN META-COGNITIVA -->
+            <div>
+                <h2 class="text-xl font-bold text-slate-800 mb-4 pb-2 border-b border-slate-200 flex items-center gap-2">
+                    <span class="bg-blue-600 text-white rounded-lg p-1 text-xs">📝</span>
+                    Fase 4: Reflexión Crítica & Autoevaluación
+                </h2>
+                
+                <div class="space-y-4">
+                    <div class="border border-slate-200 p-4 rounded-lg bg-slate-50/30">
+                        <label class="block text-sm font-semibold text-slate-800 mb-2">
+                            1. ¿Qué te parecieron los juegos interactivos que utilizamos hoy (la Carrera de Cinemática y el Laberinto Pokémon de MRU y MRUV)? ¿Qué aspectos del diseño de cada uno llamaron más tu atención?
+                        </label>
+                        <textarea rows="3" class="w-full border border-slate-300 rounded-lg p-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white" placeholder="Escribe tus impresiones personales aquí..."></textarea>
+                    </div>
+
+                    <div class="border border-slate-200 p-4 rounded-lg bg-slate-50/30">
+                        <label class="block text-sm font-semibold text-slate-800 mb-2">
+                            2. ¿Consideras que jugar a estos desafíos te ayudó a comprender mejor la diferencia física real entre el Movimiento Rectilíneo Uniforme (MRU) y el Movimiento Rectilíneo Uniformemente Variado (MRUV)? Describe qué situaciones del juego te permitieron asimilar cada concepto.
+                        </label>
+                        <textarea rows="3" class="w-full border border-slate-300 rounded-lg p-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white" placeholder="Explica tu proceso de aprendizaje teórico aquí..."></textarea>
+                    </div>
+
+                    <div class="border border-slate-200 p-4 rounded-lg bg-slate-50/30">
+                        <label class="block text-sm font-semibold text-slate-800 mb-2">
+                            3. ¿Qué parte de toda la actividad (controlar la aceleración del vehículo en la Carrera de Cinemática o responder las preguntas de combate en el Laberinto Pokémon) te resultó más desafiante y qué estrategias implementaste para poder superarla?
+                        </label>
+                        <textarea rows="3" class="w-full border border-slate-300 rounded-lg p-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white" placeholder="Describe el reto más difícil del juego y tu solución aquí..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- PIE DE PÁGINA DOCENTE -->
+        <div class="bg-slate-50 p-6 border-t border-slate-200 text-xs text-slate-500 text-center">
+            <p class="font-medium mb-1">Actividad Pedagógica Integrada: Física, Matemática y Programación en Acción</p>
+            <p>La planilla utiliza sumatorias automáticas mediante algoritmos de celdas idénticas a Excel / Google Sheets utilizando ecuaciones relacionales.</p>
+        </div>
+
+    </div>
+
+    <!-- SCRIPT DE INTERACCIÓN AUTOMÁTICA -->
+    <script>
+        // Guardar el motor seleccionado actualmente ('scratch' o 'turbo')
+        let motorActual = 'turbo';
+
+        // URL de los proyectos
+        const ID_LAB = '1217700383';
+        const ID_RACE = '1231778803';
+
+        // Base de datos de estudiantes
+        let studentsData = [];
+        let chartInstance = null;
+
+        // Estilos de clases CSS para las pestañas de selección de juegos (Fuerza visibilidad espectacular)
+        const CLASES_LAB_ACTIVO = "flex-1 py-3.5 text-center rounded-lg text-sm font-black transition-all duration-300 bg-gradient-to-r from-red-500 to-orange-500 text-white shadow-lg border-2 border-orange-300 transform scale-102 flex items-center justify-center gap-2";
+        const CLASES_LAB_INACTIVO = "flex-1 py-3.5 text-center rounded-lg text-sm font-bold transition-all duration-300 bg-red-50/70 hover:bg-red-100 text-red-700 hover:text-red-950 border border-red-200/50 flex items-center justify-center gap-2";
+        
+        const CLASES_CARRERA_ACTIVO = "flex-1 py-3.5 text-center rounded-lg text-sm font-black transition-all duration-300 bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-lg border-2 border-emerald-300 transform scale-102 flex items-center justify-center gap-2";
+        const CLASES_CARRERA_INACTIVO = "flex-1 py-3.5 text-center rounded-lg text-sm font-bold transition-all duration-300 bg-emerald-50/70 hover:bg-emerald-100 text-emerald-700 hover:text-emerald-950 border border-emerald-200/50 flex items-center justify-center gap-2";
+
+        // Cambiar dinámicamente entre Scratch oficial y TurboWarp HD
+        function cambiarMotor(motor) {
+            motorActual = motor;
+            const btnScratch = document.getElementById('btn-engine-scratch');
+            const btnTurbo = document.getElementById('btn-engine-turbo');
+            const iframeLab = document.getElementById('iframe-lab');
+            const iframeRace = document.getElementById('iframe-race');
+
+            if (motor === 'scratch') {
+                btnScratch.className = "flex-1 sm:flex-initial text-xs font-bold px-3 py-1.5 rounded transition-all bg-indigo-600 text-white shadow-sm";
+                btnTurbo.className = "flex-1 sm:flex-initial text-xs font-bold px-3 py-1.5 rounded transition-all bg-slate-300 text-slate-700";
+                iframeLab.src = `https://scratch.mit.edu/projects/${ID_LAB}/embed`;
+                iframeRace.src = `https://scratch.mit.edu/projects/${ID_RACE}/embed`;
+            } else {
+                btnTurbo.className = "flex-1 sm:flex-initial text-xs font-bold px-3 py-1.5 rounded transition-all bg-indigo-600 text-white shadow-sm";
+                btnScratch.className = "flex-1 sm:flex-initial text-xs font-bold px-3 py-1.5 rounded transition-all bg-slate-300 text-slate-700";
+                iframeLab.src = `https://turbowarp.org/${ID_LAB}/embed?autoplay=0`;
+                iframeRace.src = `https://turbowarp.org/${ID_RACE}/embed?autoplay=0`;
+            }
+        }
+
+        // Cambiar entre la pestaña de Laberinto y la de Carrera de Cinemática con retroalimentación visual súper colorida
+        function cambiarTab(juego) {
+            const btnLab = document.getElementById('tab-btn-lab');
+            const btnRace = document.getElementById('tab-btn-race');
+            const divLab = document.getElementById('game-lab');
+            const divRace = document.getElementById('game-race');
+
+            if (juego === 'lab') {
+                // Aplicar estilos súper visibles al botón activo del Laberinto (Rojo/Naranja) y apagar el de la carrera
+                btnLab.className = CLASES_LAB_ACTIVO;
+                btnRace.className = CLASES_CARRERA_INACTIVO;
+                
+                divLab.classList.remove('hidden');
+                divRace.classList.add('hidden');
+            } else {
+                // Aplicar estilos súper visibles al botón activo de la Carrera (Esmeralda/Teal) y apagar el del laberinto
+                btnRace.className = CLASES_CARRERA_ACTIVO;
+                btnLab.className = CLASES_LAB_INACTIVO;
+                
+                divRace.classList.remove('hidden');
+                divLab.classList.add('hidden');
+            }
+        }
+
+        // Función para activar Pantalla Completa en la caja contenedora
+        function activarPantallaCompleta(containerId) {
+            const container = document.getElementById(containerId);
+            if (container) {
+                if (container.requestFullscreen) {
+                    container.requestFullscreen();
+                } else if (container.webkitRequestFullscreen) { /* Safari / iOS */
+                    container.webkitRequestFullscreen();
+                } else if (container.msRequestFullscreen) { /* IE11 / Edge antiguo */
+                    container.msRequestFullscreen();
+                } else if (container.mozRequestFullScreen) { /* Firefox antiguo */
+                    container.mozRequestFullScreen();
+                }
+            }
+        }
+
+        // Realizar la suma interactiva de Excel
+        function calcularTotal() {
+            const valMru = parseInt(document.getElementById('input-mru').value) || 0;
+            const valMrv = parseInt(document.getElementById('input-mrv').value) || 0;
+            const total = valMru + valMrv;
+            
+            const totalCell = document.getElementById('cell-total');
+            totalCell.textContent = total;
+
+            totalCell.classList.add('bg-emerald-200', 'text-emerald-900');
+            setTimeout(() => {
+                totalCell.classList.remove('bg-emerald-200', 'text-emerald-900');
+            }, 300);
+        }
+
+        // Mostrar indicador y ecuación activa de la celda de Excel seleccionada
+        function focusCell(cellId, formula) {
+            document.getElementById('selected-cell-indicator').textContent = cellId;
+            document.getElementById('ecuacion-display').textContent = formula;
+        }
+
+        // ==========================================
+        // GESTIÓN DEL GRÁFICO DINÁMICO COMPARATIVO
+        // ==========================================
+
+        // Inicializar el Gráfico con Chart.js (Stacked Bar Chart para ver ambos puntajes y el total de forma visual)
+        function initializeChart() {
+            const ctx = document.getElementById('comparisonChart').getContext('2d');
+            chartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: [],
+                    datasets: [
+                        {
+                            label: 'Carrera (Física)',
+                            data: [],
+                            backgroundColor: 'rgba(16, 185, 129, 0.85)', // emerald-500 (alineado con la carrera)
+                            borderColor: 'rgb(16, 185, 129)',
+                            borderWidth: 1.5,
+                            borderRadius: 4
+                        },
+                        {
+                            label: 'Laberinto Pokémon',
+                            data: [],
+                            backgroundColor: 'rgba(239, 68, 68, 0.85)', // red-500 (Pokémon)
+                            borderColor: 'rgb(239, 68, 68)',
+                            borderWidth: 1.5,
+                            borderRadius: 4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            stacked: true,
+                            grid: { display: false }
+                        },
+                        y: {
+                            stacked: true,
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Puntaje Total Sumado',
+                                font: { weight: 'bold', family: 'sans-serif' }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: { boxWidth: 15, font: { weight: 'bold' } }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Actualiza el gráfico dinámicamente según la base de datos local
+        function actualizarGrafico() {
+            if (!chartInstance) return;
+
+            const labels = studentsData.map(s => s.name);
+            const mruData = studentsData.map(s => s.mru);
+            const mrvData = studentsData.map(s => s.mrv);
+
+            chartInstance.data.labels = labels;
+            chartInstance.data.datasets[0].data = mrvData; // Carrera
+            chartInstance.data.datasets[1].data = mruData; // Laberinto
+            chartInstance.update();
+        }
+
+        // Actualiza la tabla visual de estudiantes a un lado del gráfico
+        function actualizarTablaEstudiantes() {
+            const tbody = document.getElementById('student-table-body');
+            tbody.innerHTML = '';
+
+            if (studentsData.length === 0) {
+                tbody.innerHTML = `
+                    <tr id="empty-table-row">
+                        <td colspan="5" class="p-4 text-center text-slate-400 italic">No hay estudiantes cargados en el gráfico comparativo aún.</td>
+                    </tr>`;
+                return;
+            }
+
+            studentsData.forEach((student, index) => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 transition-colors";
+                tr.innerHTML = `
+                    <td class="p-3 font-semibold text-slate-800">${student.name}</td>
+                    <td class="p-3 text-center font-mono text-emerald-600 font-bold">${student.mrv}</td>
+                    <td class="p-3 text-center font-mono text-red-600 font-bold">${student.mru}</td>
+                    <td class="p-3 text-center font-mono font-extrabold text-emerald-700 bg-emerald-50/50">${student.mru + student.mrv}</td>
+                    <td class="p-3 text-center no-print">
+                        <button onclick="eliminarEstudiante(${index})" class="text-red-500 hover:text-red-700 font-bold hover:scale-110 transition-transform">
+                            ✕
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Elimina un estudiante de la lista por su índice
+        function eliminarEstudiante(index) {
+            studentsData.splice(index, 1);
+            actualizarTablaEstudiantes();
+            actualizarGrafico();
+        }
+
+        // Vacía toda la tabla y gráfico
+        function limpiarGrafico() {
+            studentsData = [];
+            actualizarTablaEstudiantes();
+            actualizarGrafico();
+        }
+
+        // Acción del botón principal: Agregar el estudiante que está rellenando activamente la planilla Excel
+        function agregarEstudianteActivo() {
+            const inputName = document.getElementById('student-name-input');
+            const name = inputName.value.trim() || `Estudiante ${studentsData.length + 1}`;
+            const mru = parseInt(document.getElementById('input-mru').value) || 0;
+            const mrv = parseInt(document.getElementById('input-mrv').value) || 0;
+
+            // Verificar si el estudiante ya fue ingresado para evitar duplicaciones o sobreescribir
+            const existingIndex = studentsData.findIndex(s => s.name.toLowerCase() === name.toLowerCase());
+            if (existingIndex !== -1) {
+                studentsData[existingIndex] = { name, mru, mrv };
+            } else {
+                studentsData.push({ name, mru, mrv });
+            }
+
+            actualizarTablaEstudiantes();
+            actualizarGrafico();
+
+            // Pequeña notificación visual en el botón de agregar
+            const btn = event.currentTarget;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '✅ ¡Agregado Correctamente!';
+            btn.classList.replace('bg-indigo-600', 'bg-emerald-600');
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.classList.replace('bg-emerald-600', 'bg-indigo-600');
+            }, 1500);
+        }
+
+        // Agregar estudiantes directamente de forma manual y rápida (útil para el docente)
+        function agregarEstudianteManual() {
+            const nameInput = document.getElementById('manual-name');
+            const mruInput = document.getElementById('manual-mru');
+            const mrvInput = document.getElementById('manual-mrv');
+
+            const name = nameInput.value.trim() || `Estudiante ${studentsData.length + 1}`;
+            const mru = parseInt(mruInput.value) || 0;
+            const mrv = parseInt(mrvInput.value) || 0;
+
+            studentsData.push({ name, mru, mrv });
+
+            actualizarTablaEstudiantes();
+            actualizarGrafico();
+
+            // Limpiar campos manuales
+            nameInput.value = '';
+            mruInput.value = '';
+            mrvInput.value = '';
+        }
+
+        // Restaurar todos los campos a su estado por defecto
+        function reiniciarTodo() {
+            document.getElementById('input-mru').value = 0;
+            document.getElementById('input-mrv').value = 0;
+            document.getElementById('cell-total').textContent = 0;
+            
+            // Limpiar textareas
+            const textareas = document.querySelectorAll('textarea');
+            textareas.forEach(t => t.value = "");
+            
+            // Limpiar inputs del estudiante
+            const inputs = document.querySelectorAll('input[type="text"]');
+            inputs.forEach(i => i.value = "");
+            
+            document.getElementById('input-mrv').focus();
+            focusCell('B2', '=1231778803');
+            limpiarGrafico();
+        }
+
+        // Ejecución de carga segura
+        window.onload = function() {
+            calcularTotal();
+            initializeChart();
+            
+            // Iniciar vacío por defecto a petición del usuario
+            studentsData = [];
+            actualizarTablaEstudiantes();
+            actualizarGrafico();
+        }
+    </script>
+</body>
+</html>
