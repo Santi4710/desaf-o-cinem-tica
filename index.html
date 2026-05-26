@@ -137,7 +137,7 @@
                     Imprimir / Guardar PDF
                 </button>
                 <button onclick="reiniciarTodo()" class="bg-slate-700 hover:bg-slate-600 text-slate-200 font-medium px-3 py-2 rounded-lg text-sm transition-colors">
-                    Limpiar
+                    Limpiar Todo
                 </button>
             </div>
         </div>
@@ -188,7 +188,7 @@
                 <p class="text-sm text-slate-700 leading-relaxed">
                     ¡Bienvenidos a la arena de pruebas de Cinemática! Hoy utilizaremos la teoría de los movimientos físicos en dos entornos de simulación interactivos. Completen las siguientes misiones directamente en la pantalla:
                     <br><strong class="text-slate-900">1. Dominar la Carrera Física:</strong> Conduzcan el móvil observando los cambios de fase. Experimentarán un tramo en <strong class="text-blue-700">MRU</strong> (velocidad constante) y luego deberán aplicar aceleración constante en el tramo de <strong class="text-indigo-700">MRUV</strong>.
-                    <br><strong class="text-slate-900">2. Resolver el Laberinto Pokémon de MRU y MRUV:</strong> Atraviesen los pasillos, esquiven las barreras y respondan de forma correcta a las preguntas conceptuales y de cálculo sobre velocidad, aceleración y distancia para sumar puntos de combate.
+                    <br><strong class="text-slate-900">2. Resolver el Laberinto Pokémon de MRU y MRUV:</strong> Atraviesen los pasillos, esquiven las barreras y respondan de forma correcta a las preguntas de cálculo sobre velocidad, aceleración y distancia para sumar puntos de combate.
                     <br><span class="text-emerald-700 font-semibold">Al finalizar, carguen sus mejores marcas en la planilla interactiva tipo Excel al final del documento para calcular su puntaje acumulado automático mediante la ecuación de suma, y comparen sus marcas con el resto de la clase utilizando el panel gráfico.</span>
                 </p>
             </div>
@@ -197,7 +197,7 @@
             <div class="no-print bg-slate-100 border border-slate-200 p-4 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div class="flex items-center gap-2">
                     <span class="bg-indigo-600 text-white font-bold px-2 py-1 rounded text-[10px]">REPRODUCTOR</span>
-                    <span class="text-xs text-slate-600 font-medium">Si los elements en pantalla completa se ven pequeños, usa TurboWarp HD.</span>
+                    <span class="text-xs text-slate-600 font-medium">Si los elementos en pantalla completa se ven pequeños, usa TurboWarp HD.</span>
                 </div>
                 <div class="flex bg-slate-200 p-1 rounded-lg border border-slate-300 w-full sm:w-auto">
                     <button id="btn-engine-scratch" onclick="cambiarMotor('scratch')" class="flex-1 sm:flex-initial text-xs font-bold px-3 py-1.5 rounded transition-all bg-slate-300 text-slate-700">
@@ -249,7 +249,7 @@
                             </div>
                             <div class="no-print space-y-3">
                                 <div class="p-3 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-800">
-                                    <strong>💡 Instrucción de Física:</strong> Observa el cambio. Nota cómo varía la velocidad cuando la aceleración entra en juego de forma uniforme.
+                                    <strong>💡 Instrucción de Física:</strong> Observa el velocímetro. Nota cómo varía la velocidad cuando la aceleración entra en juego de forma uniforme.
                                 </div>
                                 <!-- BOTÓN LLAMATIVO Y GRANDE CON DEGRADADO DEPORTIVO/ACELERACIÓN -->
                                 <button onclick="activarPantallaCompleta('container-race')" class="w-full bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-600 hover:from-emerald-600 hover:via-teal-600 hover:to-cyan-700 text-white font-black py-4 px-6 rounded-xl text-base shadow-xl transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center justify-center gap-3 border-2 border-emerald-300 uppercase tracking-wider animate-pulse hover:animate-none">
@@ -483,6 +483,111 @@
                             3. ¿Qué parte de toda la actividad (controlar la aceleración del vehículo en la Carrera de Cinemática o responder las preguntas de combate en el Laberinto Pokémon) te resultó más desafiante y qué estrategias implementaste para poder superarla?
                         </label>
                         <textarea rows="3" class="w-full border border-slate-300 rounded-lg p-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white" placeholder="Describe el reto más difícil del juego y tu solución aquí..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ANEXO EXTRA: DESAFÍO DE CÁLCULO CINEMÁTICO REAL -->
+            <div class="border-2 border-emerald-500/20 bg-slate-50 rounded-2xl p-6 shadow-md space-y-6">
+                <div class="border-b border-slate-200 pb-3">
+                    <div class="flex items-center justify-between flex-wrap gap-2">
+                        <h2 class="text-2xl font-extrabold text-slate-800 flex items-center gap-2">
+                            <span class="bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-lg p-2 text-sm shadow-md">🏎️</span>
+                            Anexo Extra: Desafío de Cálculo (Gran Premio Cinemática)
+                        </h2>
+                        <!-- Puntuación del desafío extra -->
+                        <div class="bg-slate-800 text-yellow-400 font-bold px-4 py-1.5 rounded-full text-sm border border-slate-700 shadow flex items-center gap-1">
+                            <span>🏆 Récord Extra:</span>
+                            <span id="challenge-score-display">0</span>
+                        </div>
+                    </div>
+                    <p class="text-xs text-slate-500 mt-2">
+                        ¡Desafío voluntario de nivel avanzado! El Auto A realiza un <strong>MRU</strong> (velocidad constante) y el Auto B realiza un <strong>MRUV</strong> (aceleración constante). Completa las incógnitas algebraicas utilizando las ecuaciones de movimiento para sincronizar los autos y completar la carrera.
+                    </p>
+                </div>
+
+                <!-- CANVAS DE LA SIMULACIÓN -->
+                <div class="bg-[#27ae60] rounded-xl overflow-hidden p-2 shadow-inner border-2 border-slate-700/10">
+                    <canvas id="challengeCanvas" width="900" height="260" class="w-full h-auto bg-[#27ae60] block rounded-lg"></canvas>
+                </div>
+
+                <!-- CONTROLES E INTERFAZ DEL DESAFÍO -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white p-5 rounded-xl border border-slate-200">
+                    <!-- Panel de Telemetría (Ecuaciones de ayuda removidas) -->
+                    <div class="space-y-4">
+                        <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 pb-2">Telemetría de los Móviles</h3>
+                        
+                        <!-- Auto A (MRU) -->
+                        <div class="bg-gradient-to-r from-red-600 to-red-500 rounded-xl p-4 text-white shadow-sm space-y-2">
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs font-black uppercase tracking-widest bg-white/20 px-2 py-0.5 rounded">Auto A (MRU)</span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2 text-sm">
+                                <div id="challenge-disp-va">Velocidad ($v$): <span class="font-extrabold text-base">--</span></div>
+                                <div id="challenge-disp-ta" class="text-right">Tiempo ($t$): <span class="font-extrabold text-base">--</span></div>
+                            </div>
+                        </div>
+
+                        <!-- Auto B (MRUV) -->
+                        <div class="bg-gradient-to-r from-blue-600 to-blue-500 rounded-xl p-4 text-white shadow-sm space-y-2">
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs font-black uppercase tracking-widest bg-white/20 px-2 py-0.5 rounded">Auto B (MRUV)</span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2 text-sm">
+                                <div id="challenge-disp-v0b">V. Inicial ($v_0$): <span class="font-bold">--</span></div>
+                                <div id="challenge-disp-ab" class="text-right font-mono">Acel. ($a$): <span class="font-bold">--</span></div>
+                                <div id="challenge-disp-tb">Tiempo ($t$): <span class="font-bold">--</span></div>
+                                <div id="challenge-disp-vfb" class="text-right">V. Final ($v_f$): <span class="font-bold">--</span></div>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-between items-center text-xs text-slate-500 pt-2 border-t border-slate-100">
+                            <span class="font-semibold text-slate-700">🏁 Meta ($d$): <span id="challenge-p-finish" class="text-sm font-bold text-slate-900">--</span> metros</span>
+                            <span>Posición Inicial ($x_0 = 0$)</span>
+                        </div>
+                    </div>
+
+                    <!-- Panel de Entrada de Datos -->
+                    <div class="flex flex-col justify-between">
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center border-b border-slate-100 pb-2">
+                                <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider">Cálculo de Variables</h3>
+                                <span id="challenge-phase-badge" class="bg-emerald-100 text-emerald-800 text-xs font-bold px-2 py-0.5 rounded-full">Fase 1: 100 Pts</span>
+                            </div>
+
+                            <!-- Inputs Dinámicos -->
+                            <div id="challenge-phase1-inputs" class="space-y-3">
+                                <p class="text-xs text-slate-500">Calcula de forma analítica y escribe los valores requeridos en la simulación:</p>
+                                
+                                <div class="space-y-1">
+                                    <label id="challenge-lbl-inputA" class="block text-xs font-bold text-red-600 uppercase">Variable A:</label>
+                                    <div class="flex">
+                                        <input type="number" id="challenge-in-valA" step="0.1" placeholder="Ej: 12.5" class="w-full border border-slate-300 rounded-l-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 bg-white font-mono font-bold">
+                                        <span id="challenge-unit-inputA" class="bg-red-600 text-white font-bold px-4 py-2 text-xs rounded-r-lg flex items-center justify-center min-w-[50px]">--</span>
+                                    </div>
+                                </div>
+
+                                <div class="space-y-1">
+                                    <label id="challenge-lbl-inputB" class="block text-xs font-bold text-blue-600 uppercase">Variable B:</label>
+                                    <div class="flex">
+                                        <input type="number" id="challenge-in-valB" step="0.1" placeholder="Ej: 2.0" class="w-full border border-slate-300 rounded-l-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white font-mono font-bold">
+                                        <span id="challenge-unit-inputB" class="bg-blue-600 text-white font-bold px-4 py-2 text-xs rounded-r-lg flex items-center justify-center min-w-[50px]">--</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Opciones múltiples de ayuda (Se activan en fallos) -->
+                            <div id="challenge-options-container" class="hidden grid grid-cols-1 gap-2"></div>
+
+                            <!-- Retroalimentación -->
+                            <div id="challenge-feedback" class="text-center text-xs font-bold p-3 rounded-lg min-h-[40px] flex items-center justify-center"></div>
+                        </div>
+
+                        <!-- Botones de Acción -->
+                        <div class="flex gap-2 mt-4">
+                            <button id="challenge-btn-validate" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-4 rounded-lg text-xs transition-colors uppercase tracking-wider shadow">Validar y Correr</button>
+                            <button id="challenge-btn-new" class="bg-slate-700 hover:bg-slate-600 text-slate-100 font-bold py-2.5 px-4 rounded-lg text-xs transition-colors uppercase tracking-wider shadow">Siguiente Reto</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -783,6 +888,407 @@
             document.getElementById('input-mrv').focus();
             focusCell('B2', '=1231778803');
             limpiarGrafico();
+            challengeResetGame();
+        }
+
+        // =========================================================================
+        //  LÓGICA DEL ANEXO EXTRA: DESAFÍO DE CÁLCULO CINEMÁTICO REAL (V14 INTEGRADO)
+        // =========================================================================
+
+        const CHALLENGE_CONSTANTS = {
+            laneHeight: 80,
+            colors: { grass: '#27ae60', asphalt: '#34495e', carA: '#e74c3c', carB: '#3498db' },
+            tolerance: 0.15
+        };
+
+        let challengeState = {
+            score: 0,
+            phase: 1,
+            isRunning: false,
+            truth: { dist: 0, va: 0, ta: 0, v0b: 0, ab: 0, tb: 0, vfb: 0 },
+            missing: { carA: 'ta', carB: 'tb' },
+            animId: null,
+            timeElapsed: 0
+        };
+
+        const challengeDom = {
+            canvas: document.getElementById('challengeCanvas'),
+            ctx: document.getElementById('challengeCanvas').getContext('2d'),
+            score: document.getElementById('challenge-score-display'),
+            phaseBadge: document.getElementById('challenge-phase-badge'),
+            inputsDiv: document.getElementById('challenge-phase1-inputs'),
+            optionsDiv: document.getElementById('challenge-options-container'),
+            lblA: document.getElementById('challenge-lbl-inputA'),
+            inA: document.getElementById('challenge-in-valA'),
+            unitA: document.getElementById('challenge-unit-inputA'),
+            lblB: document.getElementById('challenge-lbl-inputB'),
+            inB: document.getElementById('challenge-in-valB'),
+            unitB: document.getElementById('challenge-unit-inputB'),
+            feedback: document.getElementById('challenge-feedback'),
+            btnVal: document.getElementById('challenge-btn-validate'),
+            btnNew: document.getElementById('challenge-btn-new'),
+            dVa: document.getElementById('challenge-disp-va'),
+            dTa: document.getElementById('challenge-disp-ta'),
+            dV0b: document.getElementById('challenge-disp-v0b'),
+            dAb: document.getElementById('challenge-disp-ab'),
+            dTb: document.getElementById('challenge-disp-tb'),
+            dVfb: document.getElementById('challenge-disp-vfb'),
+            pFinish: document.getElementById('challenge-p-finish')
+        };
+
+        function challengeGenerateProblem() {
+            // Generación de problemas con números base más limpios para evitar discrepancias de redondeo
+            const distances = [120, 160, 200, 240, 300, 360, 400];
+            const dist = distances[Math.floor(Math.random() * distances.length)];
+
+            // Elegir un tiempo para el móvil A que divida exactamente o de forma muy limpia la distancia
+            const possibleTAs = [5, 6, 8, 10, 12, 15, 16, 20, 24, 25].filter(t => (dist / t) % 0.5 === 0);
+            const tA_target = possibleTAs.length > 0 ? possibleTAs[Math.floor(Math.random() * possibleTAs.length)] : 10;
+            const vA = dist / tA_target;
+
+            // Elegir un tiempo para el móvil B (que no sea idéntico para evitar empates por defecto)
+            const possibleTBs = [5, 8, 10, 12, 15, 16, 20].filter(t => t !== tA_target);
+            const tB_target = possibleTBs.length > 0 ? possibleTBs[Math.floor(Math.random() * possibleTBs.length)] : 12;
+
+            // Velocidad inicial del móvil B como entero limpio (0 a 5 m/s)
+            const v0B = Math.floor(Math.random() * 6); 
+
+            // Cálculo de aceleración constante para B: a = 2 * (dist - v0 * t) / t^2
+            const aB_raw = (2 * (dist - (v0B * tB_target))) / (tB_target * tB_target);
+            const aB = Math.round(aB_raw * 10) / 10;
+            const finalAB = aB === 0 ? 1.5 : aB; // Evitar que la aceleración sea cero
+
+            // Calcular velocidad final teórica de B
+            const vfB = v0B + finalAB * tB_target;
+
+            challengeState.truth = {
+                dist: dist,
+                va: vA, 
+                ta: tA_target,
+                v0b: v0B, 
+                ab: finalAB, 
+                tb: tB_target, 
+                vfb: vfB
+            };
+
+            // Selección de incógnita para Car A
+            challengeState.missing.carA = Math.random() > 0.5 ? 'va' : 'ta';
+
+            // Selección de incógnita para Car B
+            const randB = Math.random();
+            if (randB < 0.33) challengeState.missing.carB = 'tb';
+            else if (randB < 0.66) challengeState.missing.carB = 'ab';
+            else challengeState.missing.carB = 'vfb';
+
+            challengeRenderDataPanel();
+        }
+
+        function challengeRenderDataPanel() {
+            const t = challengeState.truth;
+            const m = challengeState.missing;
+
+            const show = (val, unit, isMissing) => {
+                if (isMissing) return `<span class="bg-yellow-400 text-slate-900 font-extrabold px-2 py-0.5 rounded animate-pulse">???</span>`;
+                return `<span class="font-extrabold text-white">${val.toFixed(1)}</span> <span class="text-[11px] opacity-85">${unit}</span>`;
+            };
+
+            challengeDom.pFinish.textContent = t.dist;
+
+            // CAR A (MRU)
+            challengeDom.dVa.innerHTML = `Velocidad ($v$): ${show(t.va, 'm/s', m.carA === 'va')}`;
+            challengeDom.dTa.innerHTML = `Tiempo ($t$): ${show(t.ta, 's', m.carA === 'ta')}`;
+
+            // CAR B (MRUV)
+            challengeDom.dV0b.innerHTML = `V. Inicial ($v_0$): <span class="font-extrabold text-white">${t.v0b.toFixed(1)}</span> <span class="text-[11px] opacity-85">m/s</span>`;
+            challengeDom.dAb.innerHTML = `Aceleración ($a$): ${show(t.ab, 'm/s²', m.carB === 'ab')}`;
+            challengeDom.dTb.innerHTML = `Tiempo ($t$): ${show(t.tb, 's', m.carB === 'tb')}`;
+            challengeDom.dVfb.innerHTML = `V. Final ($v_f$): ${show(t.vfb, 'm/s', m.carB === 'vfb')}`;
+
+            // Refrescar MathJax para compilar símbolos agregados dinámicamente
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                window.MathJax.typesetPromise();
+            }
+
+            challengeConfigureInput(challengeDom.lblA, challengeDom.unitA, m.carA, 'A (MRU)');
+            challengeConfigureInput(challengeDom.lblB, challengeDom.unitB, m.carB, 'B (MRUV)');
+        }
+
+        function challengeConfigureInput(labelEl, unitEl, type, carName) {
+            let txt = "", unit = "";
+            switch(type) {
+                case 'ta': case 'tb': txt = `Tiempo ${carName}`; unit = "s"; break;
+                case 'va': txt = `Velocidad ${carName}`; unit = "m/s"; break;
+                case 'ab': txt = `Aceleración ${carName}`; unit = "m/s²"; break;
+                case 'vfb': txt = `Velocidad Final ${carName}`; unit = "m/s"; break;
+            }
+            labelEl.textContent = txt + ":";
+            unitEl.textContent = unit;
+        }
+
+        function challengeUpdatePhaseUI() {
+            const p = challengeState.phase;
+            challengeDom.phaseBadge.textContent = p === 1 ? "Fase 1: Cálculo Puro (100 Pts)" : (p === 2 ? "Fase 2: Selección (50 Pts)" : "Fase 3: Ayuda Final (20 Pts)");
+            
+            if (p === 1) {
+                challengeDom.phaseBadge.className = "bg-emerald-100 text-emerald-800 text-xs font-bold px-2.5 py-0.5 rounded-full";
+                challengeDom.inputsDiv.classList.remove('hidden');
+                challengeDom.optionsDiv.classList.add('hidden');
+                challengeDom.btnVal.classList.remove('hidden');
+                challengeDom.inA.value = ""; challengeDom.inB.value = ""; challengeDom.inA.focus();
+            } else {
+                challengeDom.phaseBadge.className = p === 2 ? "bg-amber-100 text-amber-800 text-xs font-bold px-2.5 py-0.5 rounded-full" : "bg-red-100 text-red-800 text-xs font-bold px-2.5 py-0.5 rounded-full";
+                challengeDom.inputsDiv.classList.add('hidden');
+                challengeDom.optionsDiv.classList.remove('hidden');
+                challengeDom.btnVal.classList.add('hidden');
+                challengeGenerateOptions(p === 2 ? 4 : 2);
+            }
+            challengeDom.feedback.innerHTML = ""; challengeDom.feedback.className = "";
+        }
+
+        function challengeGetCorrectValues() {
+            const t = challengeState.truth;
+            // Para asegurar una precisión del 100%, realizamos los cálculos a partir de los
+            // valores redondeados exactos de un decimal que se le muestran al estudiante en pantalla:
+            const visible = {
+                dist: parseFloat(t.dist.toFixed(1)),
+                va: parseFloat(t.va.toFixed(1)),
+                ta: parseFloat(t.ta.toFixed(1)),
+                v0b: parseFloat(t.v0b.toFixed(1)),
+                ab: parseFloat(t.ab.toFixed(1)),
+                tb: parseFloat(t.tb.toFixed(1)),
+                vfb: parseFloat(t.vfb.toFixed(1))
+            };
+
+            let correctA, correctB;
+
+            // Car A (MRU)
+            if (challengeState.missing.carA === 'ta') {
+                correctA = visible.dist / visible.va;
+            } else { // 'va'
+                correctA = visible.dist / visible.ta;
+            }
+
+            // Car B (MRUV)
+            if (challengeState.missing.carB === 'tb') {
+                // Despeje de la ecuación de segundo grado basado exactamente en los valores mostrados en pantalla:
+                // 0.5 * a * t^2 + v0 * t - dist = 0
+                // t = (-v0 + sqrt(v0^2 + 2 * a * dist)) / a
+                correctB = (-visible.v0b + Math.sqrt(visible.v0b * visible.v0b + 2 * visible.ab * visible.dist)) / visible.ab;
+            } else if (challengeState.missing.carB === 'ab') {
+                // dist = v0 * t + 0.5 * a * t^2 => ab = 2 * (dist - v0 * t) / t^2
+                correctB = (2 * (visible.dist - visible.v0b * visible.tb)) / (visible.tb * visible.tb);
+            } else { // 'vfb'
+                // vf = v0 + a * t
+                correctB = visible.v0b + visible.ab * visible.tb;
+            }
+
+            return {
+                valA: correctA,
+                valB: correctB
+            };
+        }
+
+        function challengeGenerateOptions(count) {
+            challengeDom.optionsDiv.innerHTML = "";
+            const correct = challengeGetCorrectValues();
+            const opts = [];
+
+            // Añadir correcta
+            opts.push({ a: correct.valA, b: correct.valB, isCorrect: true });
+
+            // Añadir distractores
+            while(opts.length < count) {
+                let factorA = 0.8 + Math.random() * 0.4;
+                let factorB = 0.8 + Math.random() * 0.4;
+                if(Math.abs(factorA - 1) < 0.1) factorA = 1.25;
+
+                let fakeA = correct.valA * factorA;
+                let fakeB = correct.valB * factorB;
+                
+                opts.push({ a: fakeA, b: fakeB, isCorrect: false });
+            }
+            opts.sort(() => Math.random() - 0.5);
+
+            opts.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = "flex justify-between items-center bg-slate-50 border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/50 p-3 rounded-lg text-xs transition-all w-full font-mono text-left";
+                
+                const uA = challengeDom.unitA.textContent;
+                const uB = challengeDom.unitB.textContent;
+                
+                btn.innerHTML = `
+                    <span class="font-bold text-red-600">A: ${opt.a.toFixed(1)} ${uA}</span>
+                    <span class="font-bold text-blue-600">B: ${opt.b.toFixed(1)} ${uB}</span>
+                `;
+                btn.onclick = () => challengeValidateRound(opt.a, opt.b);
+                challengeDom.optionsDiv.appendChild(btn);
+            });
+        }
+
+        function challengeValidateRound(valA, valB) {
+            if(challengeState.isRunning) return;
+
+            const correct = challengeGetCorrectValues();
+            // Comparamos la entrada del alumno con los valores calculados basados en pantalla.
+            // Permitimos una tolerancia justa (0.15 o 3%) para dar margen a redondeos intermedios del alumno (por ejemplo, en raíces).
+            const okA = Math.abs(valA - correct.valA) <= Math.max(0.15, correct.valA * 0.03);
+            const okB = Math.abs(valB - correct.valB) <= Math.max(0.15, correct.valB * 0.03);
+
+            if (okA && okB) {
+                let pts = challengeState.phase === 1 ? 100 : (challengeState.phase === 2 ? 50 : 20);
+                challengeState.score += pts;
+                challengeDom.score.textContent = challengeState.score;
+                challengeDom.feedback.innerHTML = `¡EXCELENTE! Despeje de ecuaciones correcto. +${pts} Puntos.`;
+                challengeDom.feedback.className = "bg-emerald-100 text-emerald-800 p-2.5 rounded-lg text-xs font-bold w-full text-center border border-emerald-200";
+                challengeStartRaceAnimation();
+            } else {
+                if (challengeState.phase < 3) {
+                    challengeDom.feedback.textContent = "Valores incorrectos. Intentemos con el panel de opciones de respuesta.";
+                    challengeDom.feedback.className = "bg-amber-100 text-amber-800 p-2.5 rounded-lg text-xs font-bold w-full text-center border border-amber-200";
+                    challengeState.phase++;
+                    setTimeout(challengeUpdatePhaseUI, 1200);
+                } else {
+                    challengeDom.feedback.innerHTML = `Intentos agotados. Respuesta correcta: A = ${correct.valA.toFixed(1)}, B = ${correct.valB.toFixed(1)}`;
+                    challengeDom.feedback.className = "bg-red-100 text-red-800 p-2.5 rounded-lg text-xs font-bold w-full text-center border border-red-200";
+                    setTimeout(challengeStartRaceAnimation, 2000);
+                }
+            }
+        }
+
+        function challengeMetersToPx(m) { 
+            return 20 + m * ((challengeDom.canvas.width - 60) / challengeState.truth.dist); 
+        }
+
+        // Modificado para que no dibuje ecuaciones dentro de las tarjetas del canvas
+        function challengeDrawCar(x, y, color, type) {
+            const ctx = challengeDom.ctx;
+            ctx.save();
+            ctx.translate(x, y);
+            
+            // Sombra del coche
+            ctx.fillStyle = "rgba(0,0,0,0.2)";
+            ctx.fillRect(5, 5, 45, 20);
+
+            // Chasis del coche deportivo
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.moveTo(0, 0); 
+            ctx.lineTo(40, 0); 
+            ctx.lineTo(48, 10); 
+            ctx.lineTo(40, 20); 
+            ctx.lineTo(0, 20); 
+            ctx.fill();
+
+            // Parabrisas
+            ctx.fillStyle = "rgba(255,255,255,0.5)";
+            ctx.fillRect(12, 3, 12, 14); 
+            
+            // Neumáticos
+            ctx.fillStyle = "#1e293b";
+            ctx.fillRect(6, -2, 9, 4); 
+            ctx.fillRect(30, -2, 9, 4);
+            ctx.fillRect(6, 18, 9, 4); 
+            ctx.fillRect(30, 18, 9, 4);
+
+            ctx.restore();
+            
+            // Etiqueta identificadora
+            ctx.fillStyle = "white"; 
+            ctx.font = "black 11px sans-serif"; 
+            ctx.fillText(type, x + 18, y - 5);
+        }
+
+        function challengeDrawScene() {
+            const ctx = challengeDom.ctx;
+            const w = ctx.canvas.width; 
+            const h = ctx.canvas.height;
+            
+            // Terreno (Césped y Asfalto)
+            ctx.fillStyle = CHALLENGE_CONSTANTS.colors.grass; 
+            ctx.fillRect(0, 0, w, h);
+            ctx.fillStyle = CHALLENGE_CONSTANTS.colors.asphalt; 
+            ctx.fillRect(0, 50, w, 160);
+            
+            // Líneas de carril
+            ctx.strokeStyle = "white"; 
+            ctx.lineWidth = 3;
+            ctx.beginPath(); ctx.moveTo(0, 50); ctx.lineTo(w, 50); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(0, 210); ctx.lineTo(w, 210); ctx.stroke();
+            
+            // Línea central punteada
+            ctx.strokeStyle = "#cbd5e1";
+            ctx.setLineDash([20, 20]); 
+            ctx.beginPath(); ctx.moveTo(0, 130); ctx.lineTo(w, 130); ctx.stroke(); 
+            ctx.setLineDash([]);
+
+            // Línea de Meta (Damero de carrera)
+            const finishX = challengeMetersToPx(challengeState.truth.dist);
+            ctx.fillStyle = "white"; 
+            for(let i = 50; i < 210; i += 10) { 
+                if(((i - 50) / 10) % 2 === 0) {
+                    ctx.fillRect(finishX, i, 10, 10); 
+                } else {
+                    ctx.fillRect(finishX + 10, i, 10, 10); 
+                }
+            }
+
+            // Cálculo y dibujado de los coches en movimiento
+            let t = challengeState.timeElapsed;
+            // Car A (MRU): x = v * t
+            let xA = challengeState.truth.va * t;
+            // Car B (MRUV): x = v0*t + 0.5*a*t^2
+            let xB = challengeState.truth.v0b * t + 0.5 * challengeState.truth.ab * t * t;
+
+            challengeDrawCar(challengeMetersToPx(xA), 70, CHALLENGE_CONSTANTS.colors.carA, "A");
+            challengeDrawCar(challengeMetersToPx(xB), 150, CHALLENGE_CONSTANTS.colors.carB, "B");
+        }
+
+        function challengeStartRaceAnimation() {
+            challengeState.isRunning = true;
+            challengeState.timeElapsed = 0;
+            
+            challengeDom.btnVal.disabled = true;
+            challengeDom.inA.disabled = true; 
+            challengeDom.inB.disabled = true;
+            const opts = document.querySelectorAll('.option-btn'); 
+            opts.forEach(b => b.disabled = true);
+
+            challengeState.animId = requestAnimationFrame(challengeLoop);
+        }
+
+        function challengeLoop() {
+            challengeState.timeElapsed += 1 / 30; // Simulación a 30 FPS
+            challengeDrawScene();
+            
+            const tA = challengeState.truth.ta;
+            const tB = challengeState.truth.tb;
+            const maxT = Math.max(tA, tB) + 1.2;
+
+            if (challengeState.timeElapsed < maxT) {
+                requestAnimationFrame(challengeLoop);
+            } else {
+                challengeState.isRunning = false;
+                let winner = tA < tB ? "A" : "B";
+                if(Math.abs(tA - tB) < 0.1) winner = "Empate";
+                
+                let prevMsg = challengeDom.feedback.innerHTML;
+                challengeDom.feedback.innerHTML = prevMsg + `<br>🏁 ¡Carrera Terminada! Ganador: ${winner}`;
+            }
+        }
+
+        function challengeResetGame() {
+            challengeState.isRunning = false;
+            challengeState.phase = 1;
+            challengeState.timeElapsed = 0;
+            if(challengeState.animId) cancelAnimationFrame(challengeState.animId);
+
+            challengeDom.inA.disabled = false; 
+            challengeDom.inB.disabled = false;
+            challengeDom.btnVal.disabled = false;
+            
+            challengeGenerateProblem();
+            challengeUpdatePhaseUI();
+            challengeDrawScene();
         }
 
         // Ejecución de carga segura
@@ -794,6 +1300,20 @@
             studentsData = [];
             actualizarTablaEstudiantes();
             actualizarGrafico();
+
+            // Iniciar el desafío matemático del anexo extra
+            challengeDom.btnVal.addEventListener('click', () => {
+                const vA = parseFloat(challengeDom.inA.value);
+                const vB = parseFloat(challengeDom.inB.value);
+                if(isNaN(vA) || isNaN(vB)) {
+                    challengeDom.feedback.textContent = "Por favor, ingresa valores válidos."; 
+                    challengeDom.feedback.className = "bg-red-100 text-red-800 p-2 rounded text-xs font-bold text-center"; 
+                    return;
+                }
+                challengeValidateRound(vA, vB);
+            });
+            challengeDom.btnNew.addEventListener('click', challengeResetGame);
+            challengeResetGame();
         }
     </script>
 </body>
